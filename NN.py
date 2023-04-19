@@ -4,7 +4,7 @@ import numpy as np
 class NeuralNetwork():
     # Static hyperparatmeters
     # Learning rate
-    epsilon = .1
+    epsilon = .2
 
 
     # int[] structure
@@ -22,7 +22,7 @@ class NeuralNetwork():
         self.layer_outputs = [input]
         for i in range(len(self.weights)):
             # print("Multiplying: input-", input.shape, ", weight table-", self.weights[i].shape)
-            input = np.matmul(input, self.weights[i])
+            input = np.dot(input, self.weights[i])
             input = np.add(input, self.biases[i])
             input = self.sigmoid(input)
             self.layer_outputs.append(input)
@@ -34,9 +34,12 @@ class NeuralNetwork():
         output_delta = output_error * self.sigmoid_der(self.layer_outputs[-1])
 
         hidden_error = np.dot(output_delta, self.weights[-1].T)
-        hidden_delta = hidden_error * self.sigmoid_der(self.weights[-1].T)
+        hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-2])
 
-        self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.weights[-1], output_delta.T)
+        self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-2].T, output_delta)
+        self.biases[-1] += NeuralNetwork.epsilon * np.sum(output_delta, axis=0, keepdims=True)
+        self.weights[-2] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-3].T, hidden_delta)
+        self.biases[-2] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
         return self.mean_squared_error(self.layer_outputs[-1], expected)
     
