@@ -31,28 +31,29 @@ class NeuralNetwork():
     
     def backPropogate(self, expected) -> float:
         output_error = expected - self.layer_outputs[-1]
-        output_delta = output_error * self.sigmoid_der(self.layer_outputs[-1])
+        hidden_delta = output_error * self.sigmoid_der(self.layer_outputs[-1])
 
-        self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-2].T, output_delta)
-        self.biases[-1] += NeuralNetwork.epsilon * np.sum(output_delta, axis=0, keepdims=True)
+        self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-2].T, hidden_delta)
+        self.biases[-1] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
-        hidden_error = np.dot(output_delta, self.weights[-1].T)
-        hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-2])
-        
-        self.weights[-2] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-3].T, hidden_delta)
-        self.biases[-2] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
+        for i in range(len(self.weights)-2,-1,-1):
+            hidden_error = np.dot(hidden_delta, self.weights[i+1].T)
+            hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[i+1])
+            
+            self.weights[i] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[i].T, hidden_delta)
+            self.biases[i] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
-        hidden2_error = np.dot(hidden_delta, self.weights[-2].T)
-        hidden2_delta = hidden2_error * self.sigmoid_der(self.layer_outputs[-3])
+        # hidden2_error = np.dot(hidden_delta, self.weights[-2].T)
+        # hidden2_delta = hidden2_error * self.sigmoid_der(self.layer_outputs[-3])
 
-        self.weights[-3] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-4].T, hidden2_delta)
-        self.biases[-3] += NeuralNetwork.epsilon * np.sum(hidden2_delta, axis=0, keepdims=True)
+        # self.weights[-3] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-4].T, hidden2_delta)
+        # self.biases[-3] += NeuralNetwork.epsilon * np.sum(hidden2_delta, axis=0, keepdims=True)
 
-        hidden3_error = np.dot(hidden2_delta, self.weights[-3].T)
-        hidden3_delta = hidden3_error * self.sigmoid_der(self.layer_outputs[-4])
-        
-        self.weights[-4] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-5].T, hidden3_delta)
-        self.biases[-4] += NeuralNetwork.epsilon * np.sum(hidden3_delta, axis=0, keepdims=True)
+        # hidden3_error = np.dot(hidden2_delta, self.weights[-3].T)
+        # hidden3_delta = hidden3_error * self.sigmoid_der(self.layer_outputs[-4])
+
+        # self.weights[-4] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-5].T, hidden3_delta)
+        # self.biases[-4] += NeuralNetwork.epsilon * np.sum(hidden3_delta, axis=0, keepdims=True)
 
         return self.mean_squared_error(self.layer_outputs[-1], expected)
     
@@ -79,7 +80,7 @@ def testNNFeedForward():
     print(nn.feedForward(np.full((1,784), 1)))
 
 def testNNBackPropogate():
-    nn = NeuralNetwork([10,7,6,5,4])
+    nn = NeuralNetwork([10,8,4])
     input = (np.full((1,10), 1))
     expected = np.array([0,0,1,0])
 
