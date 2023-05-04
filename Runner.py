@@ -29,7 +29,7 @@ y_train = np.array([np.array([int(i==j) for j in range(10)]) for i in y_train])
 print(X_train.shape)
 print(y_train.shape)
 
-nn = NeuralNetwork([784,64,10])
+nn = NeuralNetwork([784,128,64,10])
 for i in range(X_train.shape[0]):
     out = nn.feed_forward(X_train[i].reshape(1,-1))
     cost = nn.back_propagate(y_train[i])
@@ -41,11 +41,9 @@ for i in range(X_train.shape[0]):
 
 count_right = 0
 for i in range(X_test.shape[0]):
-    out = nn.feed_forward(X_test[i].reshape(1,-1), False)
+    out = nn.feed_forward(X_test[i].reshape(1,-1))
     if (np.argmax(out) == y_test[i]):
-        count_right += 1
+        count_right += 1 
         # print(out)
 
 print("Accuracy: ", count_right / X_test.shape[0] * 100, "%")
-    
-

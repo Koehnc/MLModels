@@ -14,7 +14,7 @@ class NeuralNetwork():
         self.layer_outputs = []
 
         for i in range(len(structure) - 1):
-            self.weights.append(np.random.uniform(-.8, .8, (structure[i], structure[i+1])))
+            self.weights.append(np.random.uniform(-.2, .2, (structure[i], structure[i+1])))
             self.biases.append(np.zeros((1, structure[i+1])))
     
     def feed_forward(self, input, print_bool = False) -> list:
@@ -31,18 +31,18 @@ class NeuralNetwork():
         return input
     
     def back_propagate(self, expected) -> float:
-        output_error = expected - self.layer_outputs[-1]
-        hidden_delta = output_error * self.sigmoid_der(self.layer_outputs[-1])
+        hidden_error = expected - self.layer_outputs[-1]
+        hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-1])
 
         self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-2].T, hidden_delta)
         self.biases[-1] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
-        for i in range(len(self.weights)-2,-1,-1):
-            hidden_error = np.dot(hidden_delta, self.weights[i+1].T)
-            hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[i+1])
-            
-            self.weights[i] -= NeuralNetwork.epsilon * np.dot(self.layer_outputs[i].T, hidden_delta)
-            self.biases[i] -= NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
+        for i in range(1, len(self.weights)):
+            hidden_error = np.dot(hidden_error, self.weights[-i].T)
+            hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-(i+1)])
+
+            self.weights[-(i+1)] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-(i+2)].T, hidden_delta)
+            self.biases[-(i+1)] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
         return self.mean_squared_error(self.layer_outputs[-1], expected)
     
@@ -69,7 +69,7 @@ class NeuralNetwork():
         s = self.softmax(z)
         return s * (np.identity(len(s)) - s)
 
-    def cross_entropy_loss(self, y_true, y_pred):
+    def cross_entropy_loss(self, y_pred, y_true):
         # Clip the predicted values to avoid log(0) errors
         y_pred = np.clip(y_pred, 1e-12, 1 - 1e-12)
 
@@ -77,26 +77,3 @@ class NeuralNetwork():
         loss = -np.sum(y_true * np.log(y_pred)) / y_true.shape[0]
 
         return loss
-
-
-
-def testNNFeedForward():
-    nn = NeuralNetwork([784,256,64,10])
-    nn.feed_forward(np.random.rand(1,784))
-    # print(nn.feed_forward(np.full((1,784), 1)))
-    # print(nn.feed_forward(np.full((1,784), 1)))
-
-def testNNBackPropogate():
-    # Cannondrum: The weights get so large relo is massive and gets corrected hard because the error is 10.9 mil
-    nn = NeuralNetwork([784,16,16,10])
-    expected = np.array([0,0,1,0,0,0,0,0,0,0])
-
-    for i in range(10000):  
-        out = nn.feed_forward(np.random.rand(1,784))
-        loss = nn.back_propagate(expected)
-        if (i % 1000) == 0:
-            print(loss)
-    
-
-# testNNFeedForward()
-# testNNBackPropogate()
