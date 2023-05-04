@@ -1,6 +1,6 @@
 import numpy as np
 
-class NeuralNetwork():
+class FNN():
     # Static hyperparatmeters
     # Learning rate
     epsilon = .01
@@ -34,15 +34,15 @@ class NeuralNetwork():
         hidden_error = expected - self.layer_outputs[-1]
         hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-1])
 
-        self.weights[-1] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-2].T, hidden_delta)
-        self.biases[-1] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
+        self.weights[-1] += FNN.epsilon * np.dot(self.layer_outputs[-2].T, hidden_delta)
+        self.biases[-1] += FNN.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
         for i in range(1, len(self.weights)):
             hidden_error = np.dot(hidden_error, self.weights[-i].T)
             hidden_delta = hidden_error * self.sigmoid_der(self.layer_outputs[-(i+1)])
 
-            self.weights[-(i+1)] += NeuralNetwork.epsilon * np.dot(self.layer_outputs[-(i+2)].T, hidden_delta)
-            self.biases[-(i+1)] += NeuralNetwork.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
+            self.weights[-(i+1)] += FNN.epsilon * np.dot(self.layer_outputs[-(i+2)].T, hidden_delta)
+            self.biases[-(i+1)] += FNN.epsilon * np.sum(hidden_delta, axis=0, keepdims=True)
 
         return self.mean_squared_error(self.layer_outputs[-1], expected)
     
