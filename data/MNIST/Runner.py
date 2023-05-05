@@ -52,9 +52,9 @@ for i in range(X_train.shape[0]):
     fnn_out = fnn.feed_forward(X_train[i].reshape(1,-1))
     fnn_cost = fnn.back_propagate(y_train[i])
 
-    if (i % 5 == 0):
-        ne_cost = ne.run_gen(X_train[i].reshape(1,-1), y_train[i])
-        print("Generation ", i)
+    # if (i % 5 == 0):
+    #     ne_cost = ne.run_gen(X_train[i].reshape(1,-1), y_train[i])
+    #     print("Generation ", i)
 
     if (i % 5000 == 0):
         print("Generation ", i, ": ")
