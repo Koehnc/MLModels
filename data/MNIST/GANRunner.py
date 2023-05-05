@@ -56,8 +56,6 @@ transform = transforms.Compose([
 train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-"""
-"""
 
 # Train the GAN
 for epoch in range(num_epochs):
