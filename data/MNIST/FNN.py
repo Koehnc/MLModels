@@ -17,15 +17,12 @@ class FNN():
             self.weights.append(np.random.uniform(-.2, .2, (structure[i], structure[i+1])))
             self.biases.append(np.zeros((1, structure[i+1])))
     
-    def feed_forward(self, input, print_bool = False) -> list:
+    def feed_forward(self, input) -> list:
         self.layer_outputs = [input]
-        if (print_bool): print("\n")
         for i in range(len(self.weights)):
-            # print("Multiplying: input-", input.shape, ", weight table-", self.weights[i].shape)
             input = np.dot(input, self.weights[i])
             input = np.add(input, self.biases[i])
             input = self.sigmoid(input)
-            if (print_bool): print(input)
             self.layer_outputs.append(input)
 
         return input

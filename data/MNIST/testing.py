@@ -1,14 +1,10 @@
 import numpy as np
-
-# lists = range(3,-1,-1)
-# for i in lists:
-#     print(i)
+import matplotlib.pyplot as plt
 
 
-test = [[2,2],[2,2]]
-answer = [[1,1],[1,1]]
-choices = np.random.choice([False, True], size=[2,2])
-print(choices)
-test[choices] = answer[choices]
+y = [5,6,9]
+y1 = [1,2,10]
 
-print(test)
+plt.plot(y)
+plt.plot(y1)
+plt.show()

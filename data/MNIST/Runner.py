@@ -34,14 +34,17 @@ print(y_train.shape)
 Trained with: 
 [784,10] -> 89.53
 [784,128,10] -> 91.47
-[784,256,64,10] -> 92.37
+[784,256,64,10] -> 92.37 | 92.65
+[784,256,128,64,10] -> 93.24 | 93.01
+[784,200,100,64,10] -> 93.07
 """
-fnn = FNN([784,10])
+fnn = FNN([784,200,100,64,10])
 """ 
 Trained with: 
 200 popSize, 500 gens -> 39.04
 200 ps, 1000 gens -> 49.12
 200 ps, 2000 gens -> 66.04
+200 ps, 10000 gens -> 73.82
 """
 ne = GA(200, [784,10])
 
@@ -49,13 +52,14 @@ for i in range(X_train.shape[0]):
     fnn_out = fnn.feed_forward(X_train[i].reshape(1,-1))
     fnn_cost = fnn.back_propagate(y_train[i])
 
-    # if (i % 25 == 0):
-    #     ne_cost = ne.run_gen(X_train[i].reshape(1,-1), y_train[i])
+    if (i % 5 == 0):
+        ne_cost = ne.run_gen(X_train[i].reshape(1,-1), y_train[i])
+        print("Generation ", i)
 
     if (i % 5000 == 0):
         print("Generation ", i, ": ")
         print("\tfnn cost: ", fnn_cost)
-        # print("\tne cost: ", ne_cost)
+        print("\tne cost: ", ne_cost)
 
 
 fnn_count_right = 0
