@@ -59,7 +59,7 @@ for i in range(X_train.shape[0]):
     if (i % 5000 == 0):
         print("Generation ", i, ": ")
         print("\tfnn cost: ", fnn_cost)
-        print("\tne cost: ", ne_cost)
+        # print("\tne cost: ", ne_cost)
 
 
 fnn_count_right = 0
